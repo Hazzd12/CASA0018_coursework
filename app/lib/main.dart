@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
@@ -68,20 +69,26 @@ class _AudioRecorderState extends State<AudioRecorder> {
   }
 
   Future<void> _uploadFile(String path) async {
-    // final url = 'YOUR_SERVER_ENDPOINT';
-    // final request = http.MultipartRequest('POST', Uri.parse(url))
-    //   ..files.add(await http.MultipartFile.fromPath('file', path));
-    // final response = await request.send();
-    // final responseData = await response.stream.bytesToString();
-    var responseData ="test";
+    final url = 'http://10.129.118.189:8080/upload';
+    final request = http.MultipartRequest('POST', Uri.parse(url))
+      ..files.add(await http.MultipartFile.fromPath('file', path));
+    final response = await request.send();
+    final responseData = await response.stream.bytesToString();
     _showResponse(responseData);
   }
 
+
   void _showResponse(String response) {
+
+    Map<String, dynamic> jsonData = json.decode(response); // 将JSON字符串解析为Map
+
+
+    dynamic score = jsonData['Your score'];
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        content: Text(response),
+        content: Text('Your Score: ${score}'),
         actions: [
           TextButton(
             child: Text('OK'),
